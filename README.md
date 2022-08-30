@@ -1,2 +1,2 @@
 # sandbox
-All sorts of Sandboxes
+This repo contains snadbox environments of all sorts! 
