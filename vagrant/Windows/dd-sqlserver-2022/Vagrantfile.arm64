@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  # Use dummy Azure box - Mandatory
+  config.vm.box = "azure"
+
+  # Configure the Azure provider
+  config.vm.provider :azure do |az, override|
+    # Used to avoid getting asked for SMB username and password
+    override.vm.synced_folder ".", "C:\\vagrant_data", disabled: true
+
+    # Pull Azure AD service principal information from environment variables.
+    # Remember those variables are coming from step 3 of the plugin installation.
+    az.tenant_id = ENV["AZURE_TENANT_ID"]
+    az.client_id = ENV["AZURE_CLIENT_ID"]
+    az.client_secret = ENV["AZURE_CLIENT_SECRET"]
+    az.subscription_id = ENV["AZURE_SUBSCRIPTION_ID"]
+
+    # Specify VM parameters
+    # The VM Name and Resource Group Name are recommended to find them easily in Azure.
+    az.vm_name = 'sql19-a7-vm'
+    az.resource_group_name = 'sql19-a7-rg'
+
+    # Size and Image are recommended so a better configuration is obtained.
+    az.vm_size = 'Standard_D2as_v5'
+    az.vm_image_urn = 'MicrosoftWindowsServer:sql2019-ws2019:latest'
+    az.location = "eastus"
+
+    # Information to login to the VM using RDP file
+    az.instance_ready_timeout = 600
+    az.admin_username = "sandboxvm"
+    az.admin_password = "SandboxVM123."
+    az.vm_password = "SandboxVM123."
+
+    # WinRM information
+    override.winrm.username = "sandboxvm"
+    override.winrm.password = "SandboxVM123."
+    override.winrm.port = 5986
+    override.winrm.transport = :ssl
+    override.winrm.ssl_peer_verification = false # must be false if using a self signed cert
+
+    # Mandatory. This will delete all the created resources once "vagrant destroy" is run.
+    az.wait_for_destroy = true
+  end
+
+  # Establish the VM communicator and guest
+  config.vm.communicator = "winrm"
+  config.vm.guest = :windows
+
+  # Provision the VM
+  config.vm.provision "shell", inline: "mkdir C:\\vm_info"
+  config.vm.provision "file", source: '~/.sandbox.conf.ps1', destination: 'C:\\vm_info\\.sandbox.conf.ps1'
+  config.vm.provision "file", source: './setup_2.ps1', destination: 'C:\\vm_info\\setup_2.ps1'
+  # config.vm.provision "file", source: './data/iis.yaml', destination: 'C:\\vm_info\\iis.yaml'
+  config.vm.provision "file", source: './data/win32_event_log.yaml', destination: 'C:\\vm_info\\win32_event_log.yaml'
+  config.vm.provision "file", source: './data/windows_service.yaml', destination: 'C:\\vm_info\\windows_service.yaml'
+  config.vm.provision "file", source: './data/wmi_check.yaml', destination: 'C:\\vm_info\\wmi_check.yaml'
+  config.vm.provision "shell", path: "./setup.ps1"
+
+end
