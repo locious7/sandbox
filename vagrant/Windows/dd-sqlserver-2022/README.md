@@ -1,8 +1,8 @@
-# Windows Server 2019/SQL Server 2019/agent7
+# Windows Server 2022/SQL Server 2019/agent7
 
 ## What this VM does
 
-This VM will spin up a basic Windows Server 2019 with a SQL Server 2019 instance with DBM enabled and logging enabled. 
+This VM will spin up a basic Windows Server 2022 with a SQL Server 2019 instance with DBM enabled and logging enabled. 
 It will schedule an installation for the datadog agent 1 minute in the future and set `logs_enabled` to "true". 
 It will then add three basic Windows-specific integrations: WMI, Windows Event Viewer, and Windows Services. The addition of these 3 integrations will be scheduled for one minute after the dd-agent is installed. 
 
