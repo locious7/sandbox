@@ -2,18 +2,21 @@
 
 ## What this VM does
 
-This VM will spin up a basic Windows Server 2022 with a SQL Server 2019 instance with DBM enabled and logging enabled. 
+This VM will spin up a basic Windows Server 2022 and a SQL Server 2019 instance with DBM enabled and logging enabled. 
 It will schedule an installation for the datadog agent 1 minute in the future and set `logs_enabled` to "true". 
 It will then add three basic Windows-specific integrations: WMI, Windows Event Viewer, and Windows Services. The addition of these 3 integrations will be scheduled for one minute after the dd-agent is installed. 
 
-WMI queries a few metrics specific to the ddagent process and Notepad process.
-
-Windows Services check will be set up over `wmiApSrv`
-
-Win32_event_log integration will collect events from the System log file if
-they are of the "Error" type and the Agent will forward them to Datadog. If you want to collect frequent events, change
-type to "Information".
-
+Data collected:
+ - Database monitoring as listed here: https://docs.datadoghq.com/database_monitoring/setup_sql_server/selfhosted/?tab=sqlserver2014
+ - Windows Event logs as listed here: https://docs.datadoghq.com/integrations/win32_event_log/#configuration
+  	- Win32_event_log integration will collect events from the System log file if
+     they are of the "Error" type and the Agent will forward them to Datadog. If you want to collect frequent events, change
+     type to "Information".
+ - SQL Server Logs as listed here: https://docs.datadoghq.com/integrations/sqlserver/?tab=host
+ - SQL Server Metrics as listed here: https://docs.datadoghq.com/integrations/sqlserver/?tab=host
+ - WMI queries a few metrics specific to the ddagent process and Notepad process.
+			- Windows Services check will be set up over `wmiApSrv`
+			
 
 ## VM type: Windows Server 2019
 
@@ -35,13 +38,16 @@ arch
 ```
 
 4. To see the Windows GUI:
-* Install Microsoft Remote Desktop (From the APP Store)
-* Go to the [Azure Portal](https://portal.azure.com/#home)
-* Click on Virtual Machines
-* Search for the VM using the name ***w16-a7-vm***
-* Click on Connect > RDP
-* Download the RDP file
-* Open the file with Microsoft Remote Desktop
+	- Intel machine/Virtualbox:
+			- Use Virtualbox GUI
+	- For M1 machine/Azure:
+				- Install Microsoft Remote Desktop (From the APP Store)
+				- Go to the [Azure Portal](https://portal.azure.com/#home)
+				- Click on Virtual Machines
+				- Search for the VM using the name ***w16-a7-vm***
+		 	- Click on Connect > RDP
+		 	-	Download the RDP file
+		 	- Open the file with Microsoft Remote Desktop
 
 5. Destroy and Deallocate the VM by running:
 ```shell
